@@ -74,6 +74,7 @@
     "link-list": "npm ls --depth=0 --link=true"
   },
   "dependencies": {
+    "caniuse-lite": "^1.0.30001716",
     "execa": "^8.0.1"
   },
   "optionalDependencies": {
