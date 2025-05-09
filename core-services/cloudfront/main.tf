@@ -107,7 +107,7 @@ resource "aws_cloudfront_response_headers_policy" "this" {
 module "cdn" {
   source  = "terraform-aws-modules/cloudfront/aws"
   version = "~> 4.0"
-  aliases =  module.cdn.cloudfront_distribution_domain_name #[var.cloudfront.route53_domain]
+  aliases = module.cdn.cloudfront_distribution_domain_name #[var.cloudfront.route53_domain]
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
 
@@ -155,26 +155,26 @@ module "cdn" {
     }
 
     #api origin
-#    api = {
-#      domain_name = "${data.aws_api_gateway_rest_api.this.id}.execute-api.${var.region}.amazonaws.com"
-#      custom_origin_config = {
-#        http_port              = 80
-#        https_port             = 443
-#        origin_protocol_policy = "match-viewer"
-#        origin_ssl_protocols   = ["TLSv1.2"]
-#      }
-#      # will need authoriser as custom header later
-#      # custom_header= [{
-#      #   name = "authorizer"
-#      #   value = "authorizer"
-#      # }]
-#    }
+    #    api = {
+    #      domain_name = "${data.aws_api_gateway_rest_api.this.id}.execute-api.${var.region}.amazonaws.com"
+    #      custom_origin_config = {
+    #        http_port              = 80
+    #        https_port             = 443
+    #        origin_protocol_policy = "match-viewer"
+    #        origin_ssl_protocols   = ["TLSv1.2"]
+    #      }
+    #      # will need authoriser as custom header later
+    #      # custom_header= [{
+    #      #   name = "authorizer"
+    #      #   value = "authorizer"
+    #      # }]
+    #    }
 
-#    #malware s3 origin
-#    malware = {
-#      domain_name           = var.cloudfront.s3_malware
-#      origin_access_control = "s3_oac"
-#    }
+    #    #malware s3 origin
+    #    malware = {
+    #      domain_name           = var.cloudfront.s3_malware
+    #      origin_access_control = "s3_oac"
+    #    }
   }
 
   # default caching behaviour which will route all default requests/paths to s3 origin
@@ -186,7 +186,7 @@ module "cdn" {
     compress        = true
     query_string    = true
 
-    cache_policy_id = aws_cloudfront_cache_policy.origin_forward.id
+    cache_policy_id            = aws_cloudfront_cache_policy.origin_forward.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.this.id
 
     function_association = {
@@ -197,39 +197,39 @@ module "cdn" {
   }
 
   #caching assets from frontend s3 origin
-#  ordered_cache_behavior = [
-#    {
-#      path_pattern           = "/assets/*"
-#      target_origin_id       = "s3_oac"
-#      viewer_protocol_policy = "redirect-to-https"
-#
-#      allowed_methods = ["GET", "HEAD", "OPTIONS"]
-#      compress        = true
-#
-#      query_string = true
-#    },
+  #  ordered_cache_behavior = [
+  #    {
+  #      path_pattern           = "/assets/*"
+  #      target_origin_id       = "s3_oac"
+  #      viewer_protocol_policy = "redirect-to-https"
+  #
+  #      allowed_methods = ["GET", "HEAD", "OPTIONS"]
+  #      compress        = true
+  #
+  #      query_string = true
+  #    },
 
-    #caching api from apigateway origin
-#    {
-#      path_pattern           = "/api/*"
-#      target_origin_id       = "api"
-#      viewer_protocol_policy = "redirect-to-https"
-#
-#      allowed_methods      = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "PATCH"]
-#      use_forwarded_values = false
-#
-#      cache_policy_id          = data.aws_cloudfront_cache_policy.this.id
-#      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.this.id
-#    }
-#  ]
+  #caching api from apigateway origin
+  #    {
+  #      path_pattern           = "/api/*"
+  #      target_origin_id       = "api"
+  #      viewer_protocol_policy = "redirect-to-https"
+  #
+  #      allowed_methods      = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "PATCH"]
+  #      use_forwarded_values = false
+  #
+  #      cache_policy_id          = data.aws_cloudfront_cache_policy.this.id
+  #      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.this.id
+  #    }
+  #  ]
 
   #adding certificate in 
-#  viewer_certificate = {
-#    acm_certificate_arn            = data.aws_acm_certificate.this.arn
-#    cloudfront_default_certificate = false
-#    ssl_support_method             = "sni-only"
-#    minimum_protocol_version       = "TLSv1.2_2021"
-#  }
+  #  viewer_certificate = {
+  #    acm_certificate_arn            = data.aws_acm_certificate.this.arn
+  #    cloudfront_default_certificate = false
+  #    ssl_support_method             = "sni-only"
+  #    minimum_protocol_version       = "TLSv1.2_2021"
+  #  }
 
   web_acl_id = data.aws_wafv2_web_acl.this.arn
   tags       = module.tags.tags
