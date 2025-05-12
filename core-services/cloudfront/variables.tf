@@ -25,16 +25,7 @@ variable "cloudfront" {
   })
 }
 
-variable "apigateway" {
-  description = "api gateway name"
-  type = object({
-    api_gateway_name = string
-    stage            = string
-    s3_bucket_name   = string
-  })
-}
-
-variable "region" {
-  description = "region"
-  type        = string
-}
+#variable "region" {
+#  description = "region"
+#  type        = string
+#}
