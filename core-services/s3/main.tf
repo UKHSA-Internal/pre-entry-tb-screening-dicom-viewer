@@ -123,7 +123,7 @@ data "aws_iam_policy_document" "bucket_policy" {
 }
 
 module "tags" {
-  source = "git@github.com:ukhsa-collaboration/devops-terraform-modules//terraform-modules/helpers/tags?ref=4cbd309"
+  source = "https://github.com/ukhsa-collaboration/devops-terraform-modules/tree/main/terraform-modules/helpers/tags?ref=4cbd309"
 
   project         = var.tags.project
   client          = var.tags.client

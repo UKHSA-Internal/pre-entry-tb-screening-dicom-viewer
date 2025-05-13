@@ -32,7 +32,7 @@ data "aws_wafv2_web_acl" "this" {
 #}
 
 module "tags" {
-  source = "git@github.com:ukhsa-collaboration/devops-terraform-modules//terraform-modules/helpers/tags?ref=4cbd309"
+  source = "https://github.com/ukhsa-collaboration/devops-terraform-modules/tree/main/terraform-modules/helpers/tags?ref=4cbd309"
 
   project         = var.tags.project
   client          = var.tags.client
