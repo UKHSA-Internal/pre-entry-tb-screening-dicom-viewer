@@ -61,16 +61,16 @@ variable "s3_require_latest_tls_policy" {
   default     = true
 }
 
-variable "tags" {
-  description = "a list of tags to attach to the resource being deployed"
-  type = object({
-    project         = string
-    client          = string
-    owner           = string
-    environment     = string
-    additional_tags = map(string)
-  })
-}
+#variable "tags" {
+#  description = "a list of tags to attach to the resource being deployed"
+#  type = object({
+#    project         = string
+#    client          = string
+#    owner           = string
+#    environment     = string
+#    additional_tags = map(string)
+#  })
+#}
 
 variable "cloudfront" {
   type = object({
