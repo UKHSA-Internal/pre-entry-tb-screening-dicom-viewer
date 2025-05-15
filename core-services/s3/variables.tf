@@ -88,10 +88,10 @@ variable "cloudfront" {
   })
 }
 
-variable "region" {
-  description = "Region to deploy resource to"
-  type        = string
-}
+#variable "region" {
+#  description = "Region to deploy resource to"
+#  type        = string
+#}
 
 #variable "cloudtrail" {
 #  description = "a list of variables needed for cloudtrail"
