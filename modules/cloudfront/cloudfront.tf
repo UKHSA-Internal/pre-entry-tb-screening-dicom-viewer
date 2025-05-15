@@ -76,32 +76,33 @@ resource "aws_cloudfront_cache_policy" "origin_forward" {
   }
 }
 
-# policy for creating a cors response header, headers to be sent to the browser
-resource "aws_cloudfront_response_headers_policy" "this" {
-  name = "cors-policy-for-ohif-viewer"
-
-  cors_config {
-    access_control_allow_credentials = false
-
-    access_control_allow_headers = {
-      items = ["*"]
-    }
-
-    access_control_allow_methods = {
-      items = ["GET", "HEAD", "OPTIONS"]
-    }
-
-    access_control_allow_origins = {
-      items = ["*"]
-    }
-
-    origin_override = true
-  }
-
-  custom_headers_config {
-    items = []
-  }
-}
+##REVIEW
+## policy for creating a cors response header, headers to be sent to the browser
+#resource "aws_cloudfront_response_headers_policy" "this" {
+#  name = "cors-policy-for-ohif-viewer"
+#
+#  cors_config {
+#    access_control_allow_credentials = false
+#
+#    access_control_allow_headers = {
+#      items = ["*"]
+#    }
+#
+#    access_control_allow_methods = {
+#      items = ["GET", "HEAD", "OPTIONS"]
+#    }
+#
+#    access_control_allow_origins = {
+#      items = ["*"]
+#    }
+#
+#    origin_override = true
+#  }
+#
+#  custom_headers_config {
+#    items = []
+#  }
+#}
 
 
 module "cdn" {
@@ -187,7 +188,7 @@ module "cdn" {
     query_string    = true
 
     cache_policy_id            = aws_cloudfront_cache_policy.origin_forward.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.this.id
+#    response_headers_policy_id = aws_cloudfront_response_headers_policy.this.id
 
     function_association = {
       viewer-request = {
