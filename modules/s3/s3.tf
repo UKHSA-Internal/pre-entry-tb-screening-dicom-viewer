@@ -47,19 +47,19 @@ resource "aws_kms_key" "objects" {
         ],
         Resource = ["arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_malware_scan_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_lambda_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_sns_event_rule}*"]
       }
-#      {
-#        Sid    = "Allow use of the key so cloudtrail can use"
-#        Effect = "Allow"
-#        Principal = {
-#          Service = ["cloudtrail.amazonaws.com"]
-#        },
-#        Action = [
-#          "kms:Encrypt",
-#          "kms:Decrypt",
-#          "kms:GenerateDataKey*",
-#        ],
-#        Resource = ["arn:aws:cloudtrail:${var.region}:${data.aws_caller_identity.current.account_id}:trail/${var.cloudtrail.cloudtrail_name}*"]
-#      }
+      #      {
+      #        Sid    = "Allow use of the key so cloudtrail can use"
+      #        Effect = "Allow"
+      #        Principal = {
+      #          Service = ["cloudtrail.amazonaws.com"]
+      #        },
+      #        Action = [
+      #          "kms:Encrypt",
+      #          "kms:Decrypt",
+      #          "kms:GenerateDataKey*",
+      #        ],
+      #        Resource = ["arn:aws:cloudtrail:${var.region}:${data.aws_caller_identity.current.account_id}:trail/${var.cloudtrail.cloudtrail_name}*"]
+      #      }
     ]
   })
 }
