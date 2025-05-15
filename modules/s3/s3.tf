@@ -138,7 +138,7 @@ module "log_bucket" {
 
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 4.6.0"
-#  tags    = module.tags.tags
+  #  tags    = module.tags.tags
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
   bucket        = "logs-${each.value.name}"
@@ -173,7 +173,7 @@ module "cloudfront_log_bucket" {
   version = "~> 4.0"
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
-#  tags                     = module.tags.tags
+  #  tags                     = module.tags.tags
   bucket                   = var.cloudfront.cloudfront_log_bucket_name
   control_object_ownership = true
   object_ownership         = "BucketOwnerPreferred"
@@ -221,7 +221,7 @@ module "s3_bucket" {
   #acceleration_status = "Suspended"
   request_payer = "BucketOwner"
 
-#  tags = module.tags.tags
+  #  tags = module.tags.tags
 
   # Note: Object Lock configuration can be enabled only on new buckets
   # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_object_lock_configuration
@@ -339,7 +339,7 @@ module "cloudtrail_s3_bucket" {
   force_destroy            = true
   sse_algorithm            = "aws:kms"
   kms_master_key_arn       = aws_kms_key.objects.arn
-#  tags                     = module.tags.tags
+  #  tags                     = module.tags.tags
 }
 
 ##############################################################################
@@ -411,5 +411,5 @@ module "cloudtrail_s3_replica_bucket" {
   force_destroy            = true
   sse_algorithm            = "aws:kms"
   kms_master_key_arn       = aws_kms_key.replica_bucket.arn
-#  tags                     = module.tags.tags
+  #  tags                     = module.tags.tags
 }
