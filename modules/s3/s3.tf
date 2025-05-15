@@ -122,15 +122,15 @@ data "aws_iam_policy_document" "bucket_policy" {
   }
 }
 
-#module "tags" {
-#  source = "git::https://github.com/ukhsa-collaboration/devops-terraform-modules.git//terraform-modules/helpers/tags?ref=cebc90e87e2250fcc473e250f7008990fae50737"
-#
-#  project         = var.tags.project
-#  client          = var.tags.client
-#  owner           = var.tags.owner
-#  environment     = var.tags.environment
-#  additional_tags = var.tags.additional_tags
-#}
+module "tags" {
+  source = "git::https://github.com/ukhsa-collaboration/devops-terraform-modules.git//terraform-modules/helpers/tags?ref=cebc90e87e2250fcc473e250f7008990fae50737"
+
+  project         = var.tags.project
+  client          = var.tags.client
+  owner           = var.tags.owner
+  environment     = var.tags.environment
+  additional_tags = var.tags.additional_tags
+}
 
 # this module creates the log buckets for each bucket
 module "log_bucket" {
@@ -138,7 +138,7 @@ module "log_bucket" {
 
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 4.6.0"
-  #  tags    = module.tags.tags
+  tags    = module.tags.tags
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
   bucket        = "logs-${each.value.name}"
@@ -173,7 +173,7 @@ module "cloudfront_log_bucket" {
   version = "~> 4.0"
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
-  #  tags                     = module.tags.tags
+  tags                     = module.tags.tags
   bucket                   = var.cloudfront.cloudfront_log_bucket_name
   control_object_ownership = true
   object_ownership         = "BucketOwnerPreferred"
@@ -221,7 +221,7 @@ module "s3_bucket" {
   #acceleration_status = "Suspended"
   request_payer = "BucketOwner"
 
-  #  tags = module.tags.tags
+  tags = module.tags.tags
 
   # Note: Object Lock configuration can be enabled only on new buckets
   # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_object_lock_configuration
@@ -339,77 +339,77 @@ module "cloudtrail_s3_bucket" {
   force_destroy            = true
   sse_algorithm            = "aws:kms"
   kms_master_key_arn       = aws_kms_key.objects.arn
-  #  tags                     = module.tags.tags
+  tags                     = module.tags.tags
 }
 
 ##############################################################################
 ############# creating the cloudtrail replica region bucket ##################
 #############################################################################
-
-# Defines the replica location
-provider "aws" {
-  alias  = "secondary"
-  region = "eu-west-1" # Dublin as secondary region
-}
-
-# replica region kms key to encrypt the bucket
-resource "aws_kms_key" "replica_bucket" {
-  description             = "KMS key is used to encrypt bucket objects"
-  provider                = aws.secondary
-  deletion_window_in_days = 7
-  enable_key_rotation     = true
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Id      = "key-default-1"
-    Statement = [
-      {
-        Sid    = "Enable IAM User Permissions"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-        },
-        Action   = "kms:*"
-        Resource = "*"
-      },
-      {
-        Sid    = "Allow use of the key so cloudtrail can use"
-        Effect = "Allow"
-        Principal = {
-          Service = ["cloudtrail.amazonaws.com"]
-        },
-        Action = [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:GenerateDataKey*",
-        ],
-        Resource = ["arn:aws:cloudtrail:eu-west-1:${data.aws_caller_identity.current.account_id}:trail/${var.cloudtrail.cloudtrail_name}*"]
-      }
-    ]
-  })
-}
-
-#this resource block adds an alias name to the kms key
-resource "aws_kms_alias" "replica" {
-  provider      = aws.secondary
-  name          = "alias/replica-s3-encryption-key"
-  target_key_id = aws_kms_key.replica_bucket.key_id
-}
-
-# Creating the cloudtrail bucket in replica region
-module "cloudtrail_s3_replica_bucket" {
-  source = "cloudposse/cloudtrail-s3-bucket/aws"
-  # Cloud Posse recommends pinning every module to a specific version
-  providers = {
-    aws = aws.secondary
-  }
-
-  version = "~> 0.27.0"
-
-  name                     = var.cloudtrail.cloudtrail_replica_bucket
-  create_access_log_bucket = true
-  force_destroy            = true
-  sse_algorithm            = "aws:kms"
-  kms_master_key_arn       = aws_kms_key.replica_bucket.arn
-  #  tags                     = module.tags.tags
-}
+#
+## Defines the replica location
+#provider "aws" {
+#  alias  = "secondary"
+#  region = "eu-west-1" # Dublin as secondary region
+#}
+#
+## replica region kms key to encrypt the bucket
+#resource "aws_kms_key" "replica_bucket" {
+#  description             = "KMS key is used to encrypt bucket objects"
+#  provider                = aws.secondary
+#  deletion_window_in_days = 7
+#  enable_key_rotation     = true
+#
+#  policy = jsonencode({
+#    Version = "2012-10-17"
+#    Id      = "key-default-1"
+#    Statement = [
+#      {
+#        Sid    = "Enable IAM User Permissions"
+#        Effect = "Allow"
+#        Principal = {
+#          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+#        },
+#        Action   = "kms:*"
+#        Resource = "*"
+#      },
+#      {
+#        Sid    = "Allow use of the key so cloudtrail can use"
+#        Effect = "Allow"
+#        Principal = {
+#          Service = ["cloudtrail.amazonaws.com"]
+#        },
+#        Action = [
+#          "kms:Encrypt",
+#          "kms:Decrypt",
+#          "kms:GenerateDataKey*",
+#        ],
+#        Resource = ["arn:aws:cloudtrail:eu-west-1:${data.aws_caller_identity.current.account_id}:trail/${var.cloudtrail.cloudtrail_name}*"]
+#      }
+#    ]
+#  })
+#}
+#
+##this resource block adds an alias name to the kms key
+#resource "aws_kms_alias" "replica" {
+#  provider      = aws.secondary
+#  name          = "alias/replica-s3-encryption-key"
+#  target_key_id = aws_kms_key.replica_bucket.key_id
+#}
+#
+## Creating the cloudtrail bucket in replica region
+#module "cloudtrail_s3_replica_bucket" {
+#  source = "cloudposse/cloudtrail-s3-bucket/aws"
+#  # Cloud Posse recommends pinning every module to a specific version
+#  providers = {
+#    aws = aws.secondary
+#  }
+#
+#  version = "~> 0.27.0"
+#
+#  name                     = var.cloudtrail.cloudtrail_replica_bucket
+#  create_access_log_bucket = true
+#  force_destroy            = true
+#  sse_algorithm            = "aws:kms"
+#  kms_master_key_arn       = aws_kms_key.replica_bucket.arn
+#    tags                     = module.tags.tags
+#}

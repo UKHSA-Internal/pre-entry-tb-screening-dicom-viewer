@@ -9,10 +9,10 @@ module "qa-viewer-s3" {
   s3_elb_log_delivery_policy        = var.s3_elb_log_delivery_policy
   s3_lb_log_delivery_policy         = var.s3_lb_log_delivery_policy
   s3_require_latest_tls_policy      = var.s3_require_latest_tls_policy
-  #  tags                              = var.tags
-  cloudfront         = var.cloudfront
-  region             = var.region
-  malware_protection = var.malware_protection
-  cloudtrail         = var.cloudtrail
+  tags                              = var.tags
+  cloudfront                        = var.cloudfront
+  region                            = var.region
+  malware_protection                = var.malware_protection
+  #  cloudtrail         = var.cloudtrail
 }
 
