@@ -327,20 +327,20 @@ resource "aws_s3_bucket_cors_configuration" "this" {
   }
 }
 
-# Creating the cloudtrail bucket
-module "cloudtrail_s3_bucket" {
-  source = "cloudposse/cloudtrail-s3-bucket/aws"
-  # Cloud Posse recommends pinning every module to a specific version
-  version = "~> 0.27.0"
-  # namespace = "eg"
-  # stage     = "dev"
-  name                     = var.cloudtrail.cloudtrail_bucket
-  create_access_log_bucket = true
-  force_destroy            = true
-  sse_algorithm            = "aws:kms"
-  kms_master_key_arn       = aws_kms_key.objects.arn
-  tags                     = module.tags.tags
-}
+## Creating the cloudtrail bucket
+#module "cloudtrail_s3_bucket" {
+#  source = "cloudposse/cloudtrail-s3-bucket/aws"
+#  # Cloud Posse recommends pinning every module to a specific version
+#  version = "~> 0.27.0"
+#  # namespace = "eg"
+#  # stage     = "dev"
+#  name                     = var.cloudtrail.cloudtrail_bucket
+#  create_access_log_bucket = true
+#  force_destroy            = true
+#  sse_algorithm            = "aws:kms"
+#  kms_master_key_arn       = aws_kms_key.objects.arn
+#  tags                     = module.tags.tags
+#}
 
 ##############################################################################
 ############# creating the cloudtrail replica region bucket ##################
