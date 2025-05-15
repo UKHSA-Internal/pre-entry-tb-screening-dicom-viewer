@@ -12,7 +12,7 @@ module "qa-viewer-s3" {
   tags                              = var.tags
   cloudfront                        = var.cloudfront
   region                            = var.region
-  malware_protection                = var.malware_protection
+  #  malware_protection                = var.malware_protection
   #  cloudtrail         = var.cloudtrail
 }
 

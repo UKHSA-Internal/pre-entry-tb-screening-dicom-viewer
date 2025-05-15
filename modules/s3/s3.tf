@@ -33,20 +33,20 @@ resource "aws_kms_key" "objects" {
           "kms:GenerateDataKey*",
         ],
         Resource = "*"
-      },
-      {
-        Sid    = "Allow use of the key so eventbridge rule can access the dlq" #allowing the key to be accessed by our eventbridge
-        Effect = "Allow"
-        Principal = {
-          Service = ["events.amazonaws.com"]
-        },
-        Action = [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:GenerateDataKey*",
-        ],
-        Resource = ["arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_malware_scan_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_lambda_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_sns_event_rule}*"]
       }
+      #      {
+      #        Sid    = "Allow use of the key so eventbridge rule can access the dlq" #allowing the key to be accessed by our eventbridge
+      #        Effect = "Allow"
+      #        Principal = {
+      #          Service = ["events.amazonaws.com"]
+      #        },
+      #        Action = [
+      #          "kms:Encrypt",
+      #          "kms:Decrypt",
+      #          "kms:GenerateDataKey*",
+      #        ],
+      #        Resource = ["arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_malware_scan_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_lambda_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_sns_event_rule}*"]
+      #      }
       #      {
       #        Sid    = "Allow use of the key so cloudtrail can use"
       #        Effect = "Allow"
@@ -315,17 +315,17 @@ module "s3_bucket" {
   ]
 }
 
-# this resource block adds cors configuration to the image service bucket
-resource "aws_s3_bucket_cors_configuration" "this" {
-  bucket = var.malware_protection.malware_protection_bucket
-  cors_rule {
-    allowed_methods = ["POST"]
-    allowed_origins = ["https://${var.cloudfront.route53_domain}"]
-    allowed_headers = ["*"]
-    expose_headers  = []
-    max_age_seconds = 3000
-  }
-}
+## this resource block adds cors configuration to the image service bucket
+#resource "aws_s3_bucket_cors_configuration" "this" {
+#  bucket = var.malware_protection.malware_protection_bucket
+#  cors_rule {
+#    allowed_methods = ["POST"]
+#    allowed_origins = ["https://${var.cloudfront.route53_domain}"]
+#    allowed_headers = ["*"]
+#    expose_headers  = []
+#    max_age_seconds = 3000
+#  }
+#}
 
 ## Creating the cloudtrail bucket
 #module "cloudtrail_s3_bucket" {

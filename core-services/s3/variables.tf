@@ -9,21 +9,21 @@ variable "buckets" {
   }))
 }
 
-variable "malware_protection" {
-  description = "variables needed for malware protection"
-  type = object({
-    malware_protection_bucket               = string
-    malware_quarantine_bucket               = string
-    sqs_dlq_trigger_malware_scan_name       = string
-    sqs_dlq_trigger_malware_scan_event_rule = string
-    sqs_dlq_trigger_lambda_name             = string
-    sqs_dlq_trigger_lambda_event_rule       = string
-    sqs_dlq_trigger_sns_name                = string
-    sqs_dlq_trigger_sns_event_rule          = string
-    target_lambda                           = string
-    sns_topic_name                          = string
-  })
-}
+#variable "malware_protection" {
+#  description = "variables needed for malware protection"
+#  type = object({
+#    malware_protection_bucket               = string
+#    malware_quarantine_bucket               = string
+#    sqs_dlq_trigger_malware_scan_name       = string
+#    sqs_dlq_trigger_malware_scan_event_rule = string
+#    sqs_dlq_trigger_lambda_name             = string
+#    sqs_dlq_trigger_lambda_event_rule       = string
+#    sqs_dlq_trigger_sns_name                = string
+#    sqs_dlq_trigger_sns_event_rule          = string
+#    target_lambda                           = string
+#    sns_topic_name                          = string
+#  })
+#}
 
 variable "s3_force_destroy" {
   description = "destroy s3 bucket"
