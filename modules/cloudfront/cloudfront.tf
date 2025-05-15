@@ -187,8 +187,8 @@ module "cdn" {
     compress        = true
     query_string    = true
 
-    cache_policy_id            = aws_cloudfront_cache_policy.origin_forward.id
-#    response_headers_policy_id = aws_cloudfront_response_headers_policy.this.id
+    cache_policy_id = aws_cloudfront_cache_policy.origin_forward.id
+    #    response_headers_policy_id = aws_cloudfront_response_headers_policy.this.id
 
     function_association = {
       viewer-request = {
