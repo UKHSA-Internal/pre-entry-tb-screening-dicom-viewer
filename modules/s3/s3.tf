@@ -346,11 +346,13 @@ module "s3_bucket" {
 ############# creating the cloudtrail replica region bucket ##################
 #############################################################################
 #
-## Defines the replica location
-#provider "aws" {
-#  alias  = "secondary"
-#  region = "eu-west-1" # Dublin as secondary region
-#}
+
+# Defines the replica location
+provider "aws" {
+  alias  = "secondary"
+  region = "eu-west-1" # Dublin as secondary region
+}
+
 #
 ## replica region kms key to encrypt the bucket
 #resource "aws_kms_key" "replica_bucket" {
