@@ -32,3 +32,10 @@ cloudfront = {
   route_53_query_log_group   = ""
 }
 
+cloudtrail = {
+  cloudtrail_name           = "pets-euw-cloudtrail-managementevents-TEST"
+  cloudtrail_bucket         = "audit-logs-aw-pets-euw-dev-s3-managementevents-TEST"
+  cloudtrail_replica_bucket = "audit-logs-aw-pets-euw-dev-s3-replica-managementevents-TEST"
+  ew2_log_group             = "/aws/euw2/cloudtrail/managementevents/TEST"
+  ew1_log_group             = "/aws/euw1/cloudtrail/managementevents/TEST"
+}
