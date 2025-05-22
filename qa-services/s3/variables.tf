@@ -9,22 +9,6 @@ variable "buckets" {
   }))
 }
 
-#variable "malware_protection" {
-#  description = "variables needed for malware protection"
-#  type = object({
-#    malware_protection_bucket               = string
-#    malware_quarantine_bucket               = string
-#    sqs_dlq_trigger_malware_scan_name       = string
-#    sqs_dlq_trigger_malware_scan_event_rule = string
-#    sqs_dlq_trigger_lambda_name             = string
-#    sqs_dlq_trigger_lambda_event_rule       = string
-#    sqs_dlq_trigger_sns_name                = string
-#    sqs_dlq_trigger_sns_event_rule          = string
-#    target_lambda                           = string
-#    sns_topic_name                          = string
-#  })
-#}
-
 variable "s3_force_destroy" {
   description = "destroy s3 bucket"
   type        = string
@@ -87,22 +71,3 @@ variable "cloudfront" {
     route_53_query_log_group   = string
   })
 }
-
-#variable "region" {
-#  description = "Region to deploy resource to"
-#  type        = string
-#}
-
-variable "cloudtrail" {
-  description = "a list of variables needed for cloudtrail"
-  type = object({
-    cloudtrail_name           = string
-    cloudtrail_bucket         = string
-    cloudtrail_replica_bucket = string
-    ew2_log_group             = string
-    ew1_log_group             = string
-  })
-}
-
-
-

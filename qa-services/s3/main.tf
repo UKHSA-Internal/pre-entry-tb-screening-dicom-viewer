@@ -11,8 +11,4 @@ module "qa-viewer-s3" {
   s3_require_latest_tls_policy      = var.s3_require_latest_tls_policy
   tags                              = var.tags
   cloudfront                        = var.cloudfront
-  #  region                            = var.region
-  #  malware_protection                = var.malware_protection
-  cloudtrail = var.cloudtrail
 }
-

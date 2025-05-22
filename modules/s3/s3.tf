@@ -34,39 +34,13 @@ resource "aws_kms_key" "objects" {
         ],
         Resource = "*"
       }
-      #      {
-      #        Sid    = "Allow use of the key so eventbridge rule can access the dlq" #allowing the key to be accessed by our eventbridge
-      #        Effect = "Allow"
-      #        Principal = {
-      #          Service = ["events.amazonaws.com"]
-      #        },
-      #        Action = [
-      #          "kms:Encrypt",
-      #          "kms:Decrypt",
-      #          "kms:GenerateDataKey*",
-      #        ],
-      #        Resource = ["arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_malware_scan_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_lambda_event_rule}*", "arn:aws:events:${var.region}:${data.aws_caller_identity.current.account_id}:rule/${var.malware_protection.sqs_dlq_trigger_sns_event_rule}*"]
-      #      }
-      #      {
-      #        Sid    = "Allow use of the key so cloudtrail can use"
-      #        Effect = "Allow"
-      #        Principal = {
-      #          Service = ["cloudtrail.amazonaws.com"]
-      #        },
-      #        Action = [
-      #          "kms:Encrypt",
-      #          "kms:Decrypt",
-      #          "kms:GenerateDataKey*",
-      #        ],
-      #        Resource = ["arn:aws:cloudtrail:${var.region}:${data.aws_caller_identity.current.account_id}:trail/${var.cloudtrail.cloudtrail_name}*"]
-      #      }
     ]
   })
 }
 
 #this resource block adds an alias name to the kms key
 resource "aws_kms_alias" "this" {
-  name          = "alias/s3-encryption-key"
+  name          = "alias/qa-s3-encryption-key"
   target_key_id = aws_kms_key.objects.key_id
 }
 
@@ -313,105 +287,4 @@ module "s3_bucket" {
       }
     },
   ]
-}
-
-## this resource block adds cors configuration to the image service bucket
-#resource "aws_s3_bucket_cors_configuration" "this" {
-#  bucket = var.malware_protection.malware_protection_bucket
-#  cors_rule {
-#    allowed_methods = ["POST"]
-#    allowed_origins = ["https://${var.cloudfront.route53_domain}"]
-#    allowed_headers = ["*"]
-#    expose_headers  = []
-#    max_age_seconds = 3000
-#  }
-#}
-
-## Creating the cloudtrail bucket
-#module "cloudtrail_s3_bucket" {
-#  source = "cloudposse/cloudtrail-s3-bucket/aws"
-#  # Cloud Posse recommends pinning every module to a specific version
-#  version = "~> 0.27.0"
-#  # namespace = "eg"
-#  # stage     = "dev"
-#  name                     = var.cloudtrail.cloudtrail_bucket
-#  create_access_log_bucket = true
-#  force_destroy            = true
-#  sse_algorithm            = "aws:kms"
-#  kms_master_key_arn       = aws_kms_key.objects.arn
-#  tags                     = module.tags.tags
-#}
-
-##############################################################################
-############# creating the cloudtrail replica region bucket ##################
-#############################################################################
-#
-
-# Defines the replica location
-provider "aws" {
-  alias  = "secondary"
-  region = "eu-west-1" # Dublin as secondary region
-}
-
-
-# replica region kms key to encrypt the bucket
-resource "aws_kms_key" "replica_bucket" {
-  description             = "KMS key is used to encrypt bucket objects"
-  provider                = aws.secondary
-  deletion_window_in_days = 7
-  enable_key_rotation     = true
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Id      = "key-default-1"
-    Statement = [
-      {
-        Sid    = "Enable IAM User Permissions"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-        },
-        Action   = "kms:*"
-        Resource = "*"
-      },
-      {
-        Sid    = "Allow use of the key so cloudtrail can use"
-        Effect = "Allow"
-        Principal = {
-          Service = ["cloudtrail.amazonaws.com"]
-        },
-        Action = [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:GenerateDataKey*",
-        ],
-        Resource = ["arn:aws:cloudtrail:eu-west-1:${data.aws_caller_identity.current.account_id}:trail/${var.cloudtrail.cloudtrail_name}*"]
-      }
-    ]
-  })
-}
-
-#this resource block adds an alias name to the kms key
-resource "aws_kms_alias" "replica" {
-  provider      = aws.secondary
-  name          = "alias/replica-s3-encryption-key"
-  target_key_id = aws_kms_key.replica_bucket.key_id
-}
-
-# Creating the cloudtrail bucket in replica region
-module "cloudtrail_s3_replica_bucket" {
-  source = "cloudposse/cloudtrail-s3-bucket/aws"
-  # Cloud Posse recommends pinning every module to a specific version
-  providers = {
-    aws = aws.secondary
-  }
-
-  version = "~> 0.27.0"
-
-  name                     = var.cloudtrail.cloudtrail_replica_bucket
-  create_access_log_bucket = true
-  force_destroy            = true
-  sse_algorithm            = "aws:kms"
-  kms_master_key_arn       = aws_kms_key.replica_bucket.arn
-  tags                     = module.tags.tags
 }

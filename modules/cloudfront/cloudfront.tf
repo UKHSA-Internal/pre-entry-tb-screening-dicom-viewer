@@ -3,20 +3,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-#locals {
-#  b2c = jsondecode(data.aws_secretsmanager_secret_version.b2c_secret_version.secret_string)["B2C"]
-#}
-
-## This block retrieves the secret metadata
-#data "aws_secretsmanager_secret" "b2c_secret" {
-#  name = "B2C" # Name of the secret in AWS Secrets Manager
-#}
-
-## This block retrieves the secret's current value
-#data "aws_secretsmanager_secret_version" "b2c_secret_version" {
-#  secret_id = data.aws_secretsmanager_secret.b2c_secret.id
-#}
-
 #This data block retrieves the WAF ID
 data "aws_wafv2_web_acl" "this" {
   name     = "aw-pets-euw-cloudfront_webacl"
@@ -41,74 +27,10 @@ module "tags" {
   additional_tags = var.tags.additional_tags
 }
 
-##retrieving the apigateway id to use as an origin for cloudfront
-#data "aws_api_gateway_rest_api" "this" {
-#  name = var.apigateway.api_gateway_name
-#}
-
-## disabling cloudfront caching on our api behaviour
-#data "aws_cloudfront_cache_policy" "this" {
-#  name = "Managed-CachingDisabled"
-#}
-
-## policy to forward all parameters in viewer requests except for host header on our api behaviour
-#data "aws_cloudfront_origin_request_policy" "this" {
-#  name = "Managed-AllViewerExceptHostHeader"
-#}
-
-# policy for creating custom caching policy for the viewer distribution to the image bucket
-resource "aws_cloudfront_cache_policy" "origin_forward" {
-  name = "forward-origin-header"
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-    headers_config {
-      header_behavior = "whitelist"
-      headers         = ["Origin"]
-    }
-
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    query_strings_config {
-      query_string_behavior = "none"
-    }
-  }
-}
-
-##REVIEW
-## policy for creating a cors response header, headers to be sent to the browser
-#resource "aws_cloudfront_response_headers_policy" "this" {
-#  name = "cors-policy-for-ohif-viewer"
-#
-#  cors_config {
-#    access_control_allow_credentials = false
-#
-#    access_control_allow_headers = {
-#      items = ["*"]
-#    }
-#
-#    access_control_allow_methods = {
-#      items = ["GET", "HEAD", "OPTIONS"]
-#    }
-#
-#    access_control_allow_origins = {
-#      items = ["*"]
-#    }
-#
-#    origin_override = true
-#  }
-#
-#  custom_headers_config {
-#    items = []
-#  }
-#}
-
-
 module "cdn" {
   source  = "terraform-aws-modules/cloudfront/aws"
   version = "~> 4.0"
-  aliases = module.cdn.cloudfront_distribution_domain_name #[var.cloudfront.route53_domain]
+  # aliases = module.cdn.cloudfront_distribution_domain_name #[var.cloudfront.route53_domain]
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
 
@@ -124,7 +46,7 @@ module "cdn" {
 
   #creating origin access control for the S3
   origin_access_control = {
-    s3_oac = {
+    s3_oacqa = {
       description      = var.cloudfront.s3_one_description
       origin_type      = "s3"
       signing_behavior = "always"
@@ -138,91 +60,33 @@ module "cdn" {
   }
 
   origin = {
-    #domain origin
-    something = {
-      domain_name = var.cloudfront.domain_name
-      custom_origin_config = {
-        http_port              = 80
-        https_port             = 443
-        origin_protocol_policy = "match-viewer"
-        origin_ssl_protocols   = ["TLSv1.2"]
-      }
-    }
+    # #domain origin
+    # something = {
+    #   domain_name = var.cloudfront.domain_name
+    #   custom_origin_config = {
+    #     http_port              = 80
+    #     https_port             = 443
+    #     origin_protocol_policy = "match-viewer"
+    #     origin_ssl_protocols   = ["TLSv1.2"]
+    #   }
+    # }
 
     #frontend s3 origin
-    s3_oac = {
+    s3_oacqa = {
       domain_name           = var.cloudfront.s3_one
-      origin_access_control = "s3_oac"
+      origin_access_control = "s3_oacqa"
     }
-
-    #api origin
-    #    api = {
-    #      domain_name = "${data.aws_api_gateway_rest_api.this.id}.execute-api.${var.region}.amazonaws.com"
-    #      custom_origin_config = {
-    #        http_port              = 80
-    #        https_port             = 443
-    #        origin_protocol_policy = "match-viewer"
-    #        origin_ssl_protocols   = ["TLSv1.2"]
-    #      }
-    #      # will need authoriser as custom header later
-    #      # custom_header= [{
-    #      #   name = "authorizer"
-    #      #   value = "authorizer"
-    #      # }]
-    #    }
-
-    #    #malware s3 origin
-    #    malware = {
-    #      domain_name           = var.cloudfront.s3_malware
-    #      origin_access_control = "s3_oac"
-    #    }
   }
 
   # default caching behaviour which will route all default requests/paths to s3 origin
   default_cache_behavior = {
-    target_origin_id       = "s3_oac"
+    target_origin_id       = "s3_oacqa"
     viewer_protocol_policy = "redirect-to-https"
 
-    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods = ["GET", "HEAD"]
     compress        = true
     query_string    = true
-
-    cache_policy_id = aws_cloudfront_cache_policy.origin_forward.id
-    #    response_headers_policy_id = aws_cloudfront_response_headers_policy.this.id
-
-    function_association = {
-      viewer-request = {
-        function_arn = aws_cloudfront_function.this.arn
-      }
-    }
   }
-
-  #caching assets from frontend s3 origin
-  #  ordered_cache_behavior = [
-  #    {
-  #      path_pattern           = "/assets/*"
-  #      target_origin_id       = "s3_oac"
-  #      viewer_protocol_policy = "redirect-to-https"
-  #
-  #      allowed_methods = ["GET", "HEAD", "OPTIONS"]
-  #      compress        = true
-  #
-  #      query_string = true
-  #    },
-
-  #caching api from apigateway origin
-  #    {
-  #      path_pattern           = "/api/*"
-  #      target_origin_id       = "api"
-  #      viewer_protocol_policy = "redirect-to-https"
-  #
-  #      allowed_methods      = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "PATCH"]
-  #      use_forwarded_values = false
-  #
-  #      cache_policy_id          = data.aws_cloudfront_cache_policy.this.id
-  #      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.this.id
-  #    }
-  #  ]
 
   #adding certificate in
   #  viewer_certificate = {
@@ -276,13 +140,6 @@ module "cdn" {
 #    },
 #  ]
 #}
-
-#viewer request function for default behaviour (route user back to default)
-resource "aws_cloudfront_function" "this" {
-  name    = "function"
-  runtime = "cloudfront-js-2.0"
-  code    = file("function.js")
-}
 
 #content security policy (csp) response header policy for default behaviour
 #resource "aws_cloudfront_response_headers_policy" "this" {

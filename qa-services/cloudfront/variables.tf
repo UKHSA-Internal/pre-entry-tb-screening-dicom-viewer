@@ -24,8 +24,3 @@ variable "cloudfront" {
     route_53_query_log_group   = string
   })
 }
-
-#variable "region" {
-#  description = "region"
-#  type        = string
-#}
