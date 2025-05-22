@@ -1,5 +1,5 @@
 module "qa-viewer-s3" {
-  source = "../../modules/s3"
+  source = "../../modules/qa-s3"
   #checkov:skip=CKV_TF_1:UKHSA "Internal module, release process to be defined"
   #checkov:skip=CKV_TF_2:UKHSA "Internal module, release process to be defined"
   buckets                           = var.buckets
