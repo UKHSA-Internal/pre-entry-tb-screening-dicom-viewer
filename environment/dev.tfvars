@@ -167,6 +167,8 @@ iac_iam = {
     "logs:DeleteResourcePolicy",
     "route53:CreateQueryLoggingConfig",
     "route53:GetQueryLoggingConfig",
-    "route53:DeleteQueryLoggingConfig"
+    "route53:DeleteQueryLoggingConfig",
+    "dynamodb:PutItem",
+    "dynamodb:GetItem"
   ]
 }
