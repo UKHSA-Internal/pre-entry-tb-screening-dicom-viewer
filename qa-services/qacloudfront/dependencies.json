@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "paths": [
-      "./qa-services/s3",
-      "./qa-services/oidc"
+      "./qa-services/qas3",
+      "./qa-services/qaoidc"
     ]
   }
 }

@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "paths": [
-      "./qa-services/oidc"
+      "./qa-services/qaoidc"
     ]
   },
   "skip_when_destroying": true
