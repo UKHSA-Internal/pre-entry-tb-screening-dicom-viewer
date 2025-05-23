@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "paths": []
+    "paths": [
+      "./qa-services/oidc"
+    ]
   },
   "skip_when_destroying": true
 }
