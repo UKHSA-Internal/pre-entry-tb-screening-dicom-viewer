@@ -5,7 +5,7 @@ module "iam_github_oidc_provider" {
   version = "~> 5.54.0"
 }
 
-resource "aws_iam_policy" "iac" {
+resource "aws_iam_policy" "iac_qa" {
   name = "iac-qa-github-actions-oidc"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -19,13 +19,13 @@ resource "aws_iam_policy" "iac" {
   })
 }
 
-module "iac_iam_github_oidc_role" {
+module "qa_iac_iam_github_oidc_role" {
   source   = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-role"
   version  = "~> 5.54.0"
   name     = "iac-qa-github-actions-oidc"
   subjects = ["UKHSA-Internal/pre-entry-tb-screening-dicom-viewer:environment:${var.environment_iac}"]
   policies = {
-    TerraformCI = aws_iam_policy.iac.arn
+    TerraformCI = aws_iam_policy.iac_qa.arn
   }
 }
 
