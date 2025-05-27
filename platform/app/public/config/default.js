@@ -88,7 +88,7 @@ window.config = {
       ],
     },
   ],
-  defaultDataSourceName: 'dicomweb',
+  defaultDataSourceName: 'healthlake',
   /* Dynamic config allows user to pass "configUrl" query string this allows to load config without recompiling application. The regex will ensure valid configuration source */
   // dangerouslyUseDynamicConfig: {
   //   enabled: true,
@@ -277,29 +277,45 @@ window.config = {
     //   },
     // },
 
-    // {
-    //   namespace: '@ohif/extension-default.dataSourcesModule.dicomwebproxy',
-    //   sourceName: 'dicomwebproxy',
-    //   configuration: {
-    //     friendlyName: 'dicomweb delegating proxy',
-    //     name: 'dicomwebproxy',
-    //   },
-    // },
-    // {
-    //   namespace: '@ohif/extension-default.dataSourcesModule.dicomjson',
-    //   sourceName: 'dicomjson',
-    //   configuration: {
-    //     friendlyName: 'dicom json',
-    //     name: 'json',
-    //   },
-    // },
-    // {
-    //   namespace: '@ohif/extension-default.dataSourcesModule.dicomlocal',
-    //   sourceName: 'dicomlocal',
-    //   configuration: {
-    //     friendlyName: 'dicom local',
-    //   },
-    // },
+    {
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomwebproxy',
+      sourceName: 'dicomwebproxy',
+      configuration: {
+        friendlyName: 'dicomweb delegating proxy',
+        name: 'dicomwebproxy',
+      },
+    },
+    {
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomjson',
+      sourceName: 'dicomjson',
+      sourceType: 'json',
+      configuration: {
+        friendlyName: 'dicom json',
+        name: 'json',
+        url: 'https://pets-static-wado-test.s3.eu-west-2.amazonaws.com/dicom-manifest.json',
+      },
+    },
+    {
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomlocal',
+      sourceName: 'dicomlocal',
+      configuration: {
+        friendlyName: 'dicom local',
+      },
+    },
+    {
+      friendlyName: 'AWS HealthImaging',
+      namespace: 'ohif-aws-healthimaging.dataSourcesModule.healthlake',
+      sourceName: 'healthlake',
+      configuration: {
+        name: 'healthlake',
+        healthlake: {
+          datastoreID: '1a1f6137e3524a38ba8eb73b0799f470',
+          region: 'eu-west-1',
+          endpoint: 'https://yjwvmv4fs0.execute-api.eu-west-2.amazonaws.com/dev/proxy', // Add here the address to you proxy
+        },
+        singlepart: 'bulkdata,video,pdf,image/jphc',
+      },
+    },
   ],
   httpErrorHandler: error => {
     // This is 429 when rejected from the public idc sandbox too often.

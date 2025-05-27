@@ -65,6 +65,7 @@ function createDicomJSONApi(dicomJsonConfig) {
       if (!url) {
         url = query.get('url');
       }
+      console.log(url);
       let metaData = getMetaDataByURL(url);
 
       // if we have already cached the data from this specific url
