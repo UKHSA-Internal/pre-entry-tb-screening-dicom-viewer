@@ -69,5 +69,6 @@ variable "cloudfront" {
     s3_malware                 = string
     https_s3_malware           = string
     route_53_query_log_group   = string
+    api_domain                 = string
   })
 }

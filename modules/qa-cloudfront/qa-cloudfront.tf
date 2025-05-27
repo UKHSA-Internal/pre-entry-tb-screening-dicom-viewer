@@ -27,6 +27,21 @@ module "tags" {
   additional_tags = var.tags.additional_tags
 }
 
+# #retrieving the apigateway id to use as an origin for cloudfront
+# data "aws_api_gateway_rest_api" "this" {
+#   name = var.cloudfront.api_domain
+# }
+
+# # disabling cloudfront caching on our api behaviour
+# data "aws_cloudfront_cache_policy" "this" {
+#   name = "Managed-CachingDisabled"
+# }
+
+# # policy to forward all parameters in viewer requests except for host header on our api behaviour
+# data "aws_cloudfront_origin_request_policy" "this" {
+#   name = "Managed-AllViewerExceptHostHeader"
+# }
+
 module "cdn" {
   source  = "terraform-aws-modules/cloudfront/aws"
   version = "~> 4.0"
@@ -76,6 +91,17 @@ module "cdn" {
       domain_name           = var.cloudfront.s3_one
       origin_access_control = "s3_oacqa"
     }
+
+    #api origin
+    # api = {
+    #   domain_name = "${data.aws_api_gateway_rest_api.this.id}.execute-api.${var.region}.amazonaws.com"
+    #   custom_origin_config = {
+    #     http_port              = 80
+    #     https_port             = 443
+    #     origin_protocol_policy = "match-viewer"
+    #     origin_ssl_protocols   = ["TLSv1.2"]
+    #   }
+    # }
   }
 
   # default caching behaviour which will route all default requests/paths to s3 origin
@@ -87,6 +113,20 @@ module "cdn" {
     compress        = true
     query_string    = true
   }
+
+  # ordered_cache_behavior = [
+  #   {
+  #     path_pattern           = "/api/*"
+  #     target_origin_id       = "api"
+  #     viewer_protocol_policy = "redirect-to-https"
+
+  #     allowed_methods      = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "PATCH"]
+  #     use_forwarded_values = false
+
+  #     cache_policy_id          = data.aws_cloudfront_cache_policy.this.id
+  #     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.this.id
+  #   }
+  # ]
 
   #adding certificate in
   #  viewer_certificate = {

@@ -33,6 +33,7 @@ cloudfront = {
   s3_malware                 = ""
   https_s3_malware           = ""
   route_53_query_log_group   = ""
+  api_domain                 = ""
 }
 
 # app_iam = {
