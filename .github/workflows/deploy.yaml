@@ -37,7 +37,7 @@ jobs:
           yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' '⌛️${{ github.actor }} has just triggered App deployment to ${{ inputs.environment }}.'
 
   unit-tests:
-    name: Run unit tests for ui
+    name: Run unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
