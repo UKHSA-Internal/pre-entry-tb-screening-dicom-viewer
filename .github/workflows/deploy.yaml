@@ -63,7 +63,6 @@ jobs:
 
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      APP_DOMAIN: ${{ vars.APP_DOMAIN }}
       SSE_KEY_ID: ${{ vars.SSE_KEY_ID }}
 
     steps:
@@ -144,11 +143,7 @@ jobs:
   #           issue_number: ${{ env.PR_NUMBER }},
   #           owner: context.repo.owner,
   #           repo: context.repo.repo,
-  #           body: `🚀 Pull Request ${{ env.PR_NUMBER }} deployed to ${{ inputs.environment }}
-
-  #             - React app: ${{ vars.APP_DOMAIN }}
-  #             - API Docs: ${{ vars.APP_DOMAIN }}/api-docs
-  #           `
+  #           body: `🚀 Pull Request ${{ env.PR_NUMBER }} deployed to ${{ inputs.environment }}`
   #           })
   #       env:
   #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
