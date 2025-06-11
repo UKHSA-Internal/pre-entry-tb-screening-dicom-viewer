@@ -1,0 +1,11 @@
+name: Dicom Viewer Deployment Deployment - Dev
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: 'dev'
+    secrets: inherit
