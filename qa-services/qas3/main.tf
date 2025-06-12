@@ -11,5 +11,5 @@ module "qa-viewer-s3" {
   s3_require_latest_tls_policy      = var.s3_require_latest_tls_policy
   tags                              = var.tags
   cloudfront                        = var.cloudfront
-  cloudtrail                        = var.cloudtrail
+  # cloudtrail                        = var.cloudtrail
 }

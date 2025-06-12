@@ -73,13 +73,13 @@ variable "cloudfront" {
   })
 }
 
-variable "cloudtrail" {
-  description = "a list of variables needed for cloudtrail"
-  type = object({
-    cloudtrail_name           = string
-    cloudtrail_bucket         = string
-    cloudtrail_replica_bucket = string
-    ew2_log_group             = string
-    ew1_log_group             = string
-  })
-}
+# variable "cloudtrail" {
+#   description = "a list of variables needed for cloudtrail"
+#   type = object({
+#     cloudtrail_name           = string
+#     cloudtrail_bucket         = string
+#     cloudtrail_replica_bucket = string
+#     ew2_log_group             = string
+#     ew1_log_group             = string
+#   })
+# }
