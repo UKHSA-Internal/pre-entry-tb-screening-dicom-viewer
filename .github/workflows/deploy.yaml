@@ -101,7 +101,7 @@ jobs:
     name: Share Deployment Details
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    # needs: [unit-tests, build-and-deploy-viewer]
+    needs: [unit-tests, build-and-deploy-viewer]
 
     steps:
       - name: Checkout code
