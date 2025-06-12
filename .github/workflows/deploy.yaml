@@ -13,31 +13,31 @@ on:
         required: true
 
 jobs:
-  # Higher-Env-Notification:
-  #   if: contains('prod preprod', inputs.environment)
-  #   name: Notify team on deployment to higher environments
-  #   runs-on: ubuntu-latest
-  #   environment: ${{ inputs.environment }}
+  Higher-Env-Notification:
+    if: contains('prod preprod', inputs.environment)
+    name: Notify team on deployment to higher environments
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20.x
-  #         cache: 'yarn'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'yarn'
 
-  #     - name: Install dependencies
-  #       run: yarn install
+      - name: Install dependencies
+        run: yarn install
 
-  #     - name: Notify Teams Chat
-  #       run: |
-  #         yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' '⌛️${{ github.actor }} has just triggered App deployment to ${{ inputs.environment }}.'
+      - name: Notify Teams Chat
+        run: |
+          yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' '⌛️${{ github.actor }} has just triggered App deployment to ${{ inputs.environment }}.'
 
   unit-tests:
-    name: Run unit tests for ui
+    name: Run unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -59,11 +59,10 @@ jobs:
     name: Build and Deploy Viewer
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    # needs: [unit-tests]
+    needs: [unit-tests]
 
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      APP_DOMAIN: ${{ vars.APP_DOMAIN }}
       SSE_KEY_ID: ${{ vars.SSE_KEY_ID }}
 
     steps:
@@ -98,57 +97,53 @@ jobs:
           aws s3 sync . s3://$APPDEPLOY_BUCKET_NAME --sse aws:kms --sse-kms-key-id ${{
           vars.SSE_KEY_ID }}
 
-  # share-deployment-details:
-  #   name: Share Deployment Details
-  #   runs-on: ubuntu-latest
-  #   environment: ${{ inputs.environment }}
-  #   needs: [unit-tests, build-and-deploy-viewer]
+  share-deployment-details:
+    name: Share Deployment Details
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    needs: [unit-tests, build-and-deploy-viewer]
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20.x
-  #         cache: 'yarn'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'yarn'
 
-  #     - name: Install dependencies
-  #       run: yarn install
+      - name: Install dependencies
+        run: yarn install
 
-  #     - name: Notify Teams Chat(Dev and QAT)
-  #       if: contains('dev qat', inputs.environment)
-  #       run: |
-  #         yarn notify:teams '${{ secrets.APP_DEPLOYMENT_NOTIFICATION_CHAT }}' '${{ github.ref_name }} has been deployed to ${{ inputs.environment }}'
+      - name: Notify Teams Chat(Dev and QAT)
+        if: contains('dev qat', inputs.environment)
+        run: |
+          yarn notify:teams '${{ secrets.APP_DEPLOYMENT_NOTIFICATION_CHAT }}' 'OHIF Viewer: ${{ github.ref_name }} has been deployed to ${{ inputs.environment }}'
 
-  #     - name: Notify Teams Chat(Preprod and Prod)
-  #       if: contains('prod preprod', inputs.environment)
-  #       run: |
-  #         yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' '🚀 App deployment to ${{ inputs.environment }} ran successfully'
+      - name: Notify Teams Chat(Preprod and Prod)
+        if: contains('prod preprod', inputs.environment)
+        run: |
+          yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' 'OHIF Viewer: 🚀 App deployment to ${{ inputs.environment }} ran successfully'
 
-  #     - name: Get Pull Request Number
-  #       id: get_pr
-  #       run: |
-  #         PR_NUMBER=$(gh pr list --head '${{ github.ref_name }}' --state open --json number --jq '.[0].number')
-  #         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Pull Request Number
+        id: get_pr
+        run: |
+          PR_NUMBER=$(gh pr list --head '${{ github.ref_name }}' --state open --json number --jq '.[0].number')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Deployment details
-  #       uses: actions/github-script@v7
-  #       if: env.PR_NUMBER != ''
-  #       with:
-  #         script: |
-  #           github.rest.issues.createComment({
-  #           issue_number: ${{ env.PR_NUMBER }},
-  #           owner: context.repo.owner,
-  #           repo: context.repo.repo,
-  #           body: `🚀 Pull Request ${{ env.PR_NUMBER }} deployed to ${{ inputs.environment }}
-
-  #             - React app: ${{ vars.APP_DOMAIN }}
-  #             - API Docs: ${{ vars.APP_DOMAIN }}/api-docs
-  #           `
-  #           })
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deployment details
+        uses: actions/github-script@v7
+        if: env.PR_NUMBER != ''
+        with:
+          script: |
+            github.rest.issues.createComment({
+            issue_number: ${{ env.PR_NUMBER }},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `🚀 Pull Request ${{ env.PR_NUMBER }} deployed to ${{ inputs.environment }}`
+            })
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
