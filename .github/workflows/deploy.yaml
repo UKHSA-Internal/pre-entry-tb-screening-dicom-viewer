@@ -59,7 +59,7 @@ jobs:
     name: Build and Deploy Viewer
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    # needs: [unit-tests]
+    needs: [unit-tests]
 
     env:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -101,7 +101,7 @@ jobs:
     name: Share Deployment Details
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    needs: [unit-tests, build-and-deploy-viewer]
+    # needs: [unit-tests, build-and-deploy-viewer]
 
     steps:
       - name: Checkout code
