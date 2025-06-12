@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     name: Deploy Development Terraform
-    uses: UKHSA-Internal/devops-github-reusable-workflows/.github/workflows/terraform-plan-apply.yml@v3.0.0
+    uses: ukhsa-collaboration/devops-github-reusable-workflows/.github/workflows/terraform-plan-apply.yml@v3.0.0
     concurrency:
       group: "dev-main"
     permissions:
