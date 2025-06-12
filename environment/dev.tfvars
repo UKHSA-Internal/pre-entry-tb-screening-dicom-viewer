@@ -170,6 +170,21 @@ iac_iam = {
     "route53:GetQueryLoggingConfig",
     "route53:DeleteQueryLoggingConfig",
     "dynamodb:PutItem",
-    "dynamodb:GetItem"
+    "dynamodb:GetItem",
+    "dynamodb:DeleteItem",
+    "dynamodb:DescribeTable",
+    "dynamodb:DescribeContinuousBackups",
+    "dynamodb:DescribeBackup",
+    "dynamodb:DescribeTimeToLive",
+    "dynamodb:CreateTable",
+    "dynamodb:UpdateTable",
+    "dynamodb:DeleteTable",
+    "dynamodb:ListTables",
+    "dynamodb:BatchWriteItem",
+    "dynamodb:BatchGetItem",
+    "dynamodb:ListTagsOfResource",
+    "dynamodb:TagResource",
+    "dynamodb:UntagResource",
+    "dynamodb:UpdateContinuousBackups",
   ]
 }
