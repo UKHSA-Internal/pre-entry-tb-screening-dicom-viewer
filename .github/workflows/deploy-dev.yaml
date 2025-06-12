@@ -1,4 +1,4 @@
-name: Dicom Viewer Deployment Deployment - Dev
+name: Dicom Viewer Deployment - Dev
 
 on:
   workflow_dispatch:
