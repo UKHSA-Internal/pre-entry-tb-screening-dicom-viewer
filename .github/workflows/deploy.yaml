@@ -34,7 +34,7 @@ jobs:
 
       - name: Notify Teams Chat
         run: |
-          yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' '⌛️${{ github.actor }} has just triggered App deployment to ${{ inputs.environment }}.'
+          yarn notify:teams '${{ secrets.TECH_TEAM_CHAT }}' 'OHIF Viewer: ⌛️${{ github.actor }} has just triggered App deployment to ${{ inputs.environment }}.'
 
   unit-tests:
     name: Run unit tests
