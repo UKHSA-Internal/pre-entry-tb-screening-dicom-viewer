@@ -23,7 +23,7 @@ jobs:
           git fetch upstream
 
       - name: create pull request
-        run: gh pr create -B master -H master --title 'OHIF updates' --body 'Review and merge or cancel'
+        run: gh pr create -B release/3.9 -H master --title 'OHIF updates' --body 'Review and merge or cancel'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
