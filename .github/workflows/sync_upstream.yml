@@ -14,13 +14,14 @@ jobs:
       - name: Checkout Fork
         uses: actions/checkout@v4
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: feature/tbbeta-965
 
       # Step 2: Add the upstream repository
       - name: Add Upstream Repo
         run: |
           git remote add upstream https://github.com/OHIF/Viewers.git
-          git fetch upstream
+          git fetch upstream release/3.9
 
       - name: create pull request
         run: gh pr create -B master -H release/3.9 --title 'OHIF updates' --body 'Review and merge or cancel'
