@@ -1,41 +1,76 @@
 name: Sync Upstream Repo
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight (UTC)
   workflow_dispatch: # Allows manual triggering
+  schedule:
+    - cron: "0 9 * * MON" # run every Monday at 09:00 UTC
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the forked repository
-      - name: Checkout Fork
-        uses: actions/checkout@v4
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 2: Add the upstream repository
-      - name: Add Upstream Repo
+      - name: Get latest upstream release
+        id: upstream
         run: |
-          git remote add upstream https://github.com/OHIF/Viewers.git
-          git fetch upstream
+          UPSTREAM_REPO="https://github.com/OHIF/Viewers.git"
+          LATEST_UPSTREAM_TAG=$(curl -s "https://api.github.com/repos/OHIF/Viewers/releases/latest" | jq -r .tag_name)
+          echo "Latest upstream release: $LATEST_UPSTREAM_TAG"
+          echo "tag=$LATEST_UPSTREAM_TAG" >> $GITHUB_OUTPUT            
 
-      - name: create pull request
-        run: gh pr create -B master -H release/3.9 --title 'OHIF updates' --body 'Review and merge or cancel'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compare new release with current version
+        id: compare
+        run: |
+          CURRENT_VERSION="v3.9.0" # forked release tag
+          LATEST_UPSTREAM_TAG="${{ steps.upstream.outputs.tag }}"
+          echo "Current: $CURRENT_VERSION"
+          echo "Upstream: $LATEST_UPSTREAM_TAG"
+          
+          if [ "$CURRENT_VERSION" != "$LATEST_UPSTREAM_TAG" ]; then
+            echo "new_release=true" >> $GITHUB_OUTPUT
+            echo "New release detected: $LATEST_UPSTREAM_TAG"
+          else
+            echo "new_release=false" >> $GITHUB_OUTPUT
+            echo "Release is up to date"
+          fi
 
-      # # Step 3: Merge changes from upstream
-      # - name: Merge Upstream Changes
-      #   run: |
-      #     git checkout main
-      #     git merge upstream/main --allow-unrelated-histories
+      - name: Check if issue already exists
+        id: find_issue
+        run: |
+          VERSION="${{ steps.upstream.outputs.tag }}"
+          REPO="${{ github.repository }}"
+          
+          # Search open issues for this version
+          EXISTS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues?state=open&per_page=100" \
+            | jq -r --arg VERSION "$VERSION" '.[] | select(.title | contains($VERSION)) | .number')
+          
+          if [ -n "$EXISTS" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "message=Issue for version $VERSION already exists: #$EXISTS" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "message=No issue found for version $VERSION" >> $GITHUB_OUTPUT
+          fi
 
-      # # Step 4: Push changes to the fork
-      # - name: Push Changes to Fork
-      #   run: |
-      #     git push origin main
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: Create issue
+        if: steps.find_issue.outputs.exists == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.upstream.outputs.tag }}';
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚀 New upstream release detected ${version}`,
+              body: `A new upstream release has been published!\n\nUpstream release: ${{ steps.upstream.outputs.tag }}\nCurrent fork version: v3.9.0\n\nCheck it here: https://github.com/OHIF/Viewers/releases`,
+            });
+
+      
