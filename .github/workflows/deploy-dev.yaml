@@ -7,5 +7,5 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy.yaml
     with:
-      environment: 'dev'
+      environment: "dev"
     secrets: inherit
