@@ -1,0 +1,11 @@
+name: Dicom Viewer Deployment - Prod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: "prod"
+    secrets: inherit
