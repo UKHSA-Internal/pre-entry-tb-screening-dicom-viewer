@@ -1,4 +1,4 @@
-name: Dicom Viewer Deployment - Dev
+name: Dicom Viewer Deployment - Test
 
 on:
   workflow_dispatch:
@@ -7,5 +7,5 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy.yaml
     with:
-      environment: "dev"
+      environment: "qat"
     secrets: inherit
