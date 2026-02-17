@@ -28,7 +28,7 @@ window.config = {
     {
       authority: 'https://login.microsoftonline.com/ee4e1499-4a35-4b2e-ad47-5f3cf9de8666',
       client_id: 'fd415a55-ca78-4926-84bc-782fab6411b4',
-      redirect_uri: '/callback',
+      redirect_uri: '/',
       scope: 'Imaging.Read profile openid',
       post_logout_redirect_uri: 'https://qareview.dev.pets.ukhsa.gov.uk/',
       revoke_uri: '',
