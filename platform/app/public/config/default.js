@@ -23,6 +23,22 @@ window.config = {
     // above, the number of requests can be go a lot higher.
     prefetch: 25,
   },
+
+  oidc: [
+    {
+      authority: 'https://login.microsoftonline.com/ee4e1499-4a35-4b2e-ad47-5f3cf9de8666',
+      client_id: 'fd415a55-ca78-4926-84bc-782fab6411b4',
+      redirect_uri: '/callback',
+      scope: 'Imaging.Read profile openid',
+      post_logout_redirect_uri: 'https://qareview.dev.pets.ukhsa.gov.uk/',
+      revoke_uri: '',
+      revokeAccessTokenOnSignout: false,
+      automaticSilentRenew: true,
+      // CHANGE THESE *****************************
+      response_type: 'code',
+      useAuthorizationCodeFlow: true,
+    },
+  ],
   // filterQueryParam: false,
   defaultDataSourceName: 'dicomweb',
   /* Dynamic config allows user to pass "configUrl" query string this allows to load config without recompiling application. The regex will ensure valid configuration source */
