@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "@docusaurus/core": "3.7.0",
+    "@docusaurus/core": "3.9.2",
     "@docusaurus/faster": "3.7.0",
     "@docusaurus/module-type-aliases": "3.7.0",
     "@docusaurus/plugin-client-redirects": "3.7.0",
